@@ -1,0 +1,16 @@
+[functions.sync-ghl-names]
+verify_jwt = false
+
+[functions.integration-callback]
+verify_jwt = false
+
+[functions.tracker-ingest]
+verify_jwt = false
+
+[functions.tracker-heartbeat]
+verify_jwt = false
+
+[functions.sync-names-scheduled]
+verify_jwt = false
+# Schedule configured via Supabase Dashboard → Edge Functions → sync-names-scheduled → Schedule
+# Cron: "0 3 * * *"  (3 AM UTC daily)

@@ -1,0 +1,368 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 224 20% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 20% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 20% 14%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 20% 14%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 199 89% 48%;
+    --radius: 0.875rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 9% 46%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 224 20% 14%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 199 89% 48%;
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+    --glass-bg: 220 14% 98% / 0.8;
+    --glass-border: 220 13% 91% / 0.5;
+    --glass-shadow: 224 20% 14% / 0.04;
+    --chart-cyan: 199 89% 48%;
+    --chart-amber: 38 92% 50%;
+    --chart-violet: 263 70% 50%;
+    --chart-emerald: 160 84% 39%;
+    --chart-rose: 346 77% 50%;
+  }
+
+  .dark {
+    --background: 230 15% 3.5%;
+    --foreground: 213 31% 91%;
+    --card: 228 14% 6.5%;
+    --card-foreground: 213 31% 91%;
+    --popover: 228 14% 6.5%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 230 15% 3.5%;
+    --secondary: 228 15% 12%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 228 15% 12%;
+    --muted-foreground: 217 10% 58%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 230 15% 3.5%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 14% 13%;
+    --input: 228 14% 13%;
+    --ring: 199 89% 48%;
+    --surface-raised: 228 12% 10%;
+    --sidebar-background: 230 15% 3%;
+    --sidebar-foreground: 217 10% 52%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 230 15% 3.5%;
+    --sidebar-accent: 228 15% 10%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 228 14% 10%;
+    --sidebar-ring: 199 89% 48%;
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 230 15% 3.5%;
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+    --glass-bg: 228 14% 6.5% / 0.8;
+    --glass-border: 213 31% 91% / 0.07;
+    --glass-shadow: 0 0% 0% / 0.3;
+    --chart-cyan: 199 89% 48%;
+    --chart-amber: 38 92% 50%;
+    --chart-violet: 263 70% 58%;
+    --chart-emerald: 160 84% 45%;
+    --chart-rose: 346 77% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  .dark body {
+    background: linear-gradient(180deg, hsl(230, 15%, 3.5%), hsl(230, 15%, 5%));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.03em;
+  }
+}
+
+@layer components {
+  /* ─── Glass card ─── */
+  .glass-card {
+    @apply rounded-xl border;
+    background: hsl(var(--glass-bg));
+    border-color: hsl(var(--glass-border));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--foreground) / 0.03),
+      0 1px 3px hsl(var(--glass-shadow)),
+      0 1px 2px -1px hsl(var(--glass-shadow));
+    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .glass-card:hover {
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--foreground) / 0.04),
+      0 8px 24px hsl(var(--glass-shadow)),
+      0 4px 8px -4px hsl(var(--glass-shadow));
+    border-color: hsl(var(--foreground) / 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* ─── Sidebar glass ─── */
+  .glass-sidebar {
+    @apply border-r;
+    background: hsl(var(--sidebar-background));
+    border-color: hsl(var(--sidebar-border));
+  }
+
+  .dark .glass-sidebar {
+    background: linear-gradient(180deg, hsl(228 14% 5%), hsl(228 14% 3%));
+  }
+
+  /* ─── Glow ─── */
+  .glow-primary {
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.2), 0 0 64px hsl(var(--primary) / 0.06);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 24px hsl(var(--chart-amber) / 0.2), 0 0 64px hsl(var(--chart-amber) / 0.06);
+  }
+
+  /* ─── Metric card ─── */
+  .metric-card {
+    @apply glass-card p-5 relative overflow-hidden;
+  }
+
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.05) 0%, transparent 70%);
+    transform: translate(30%, -30%);
+    pointer-events: none;
+  }
+
+  /* ─── Status pills ─── */
+  .status-healthy { @apply bg-emerald-500/10 text-emerald-500 border-emerald-500/20; }
+  .status-warning { @apply bg-amber-500/10 text-amber-500 border-amber-500/20; }
+  .status-critical { @apply bg-red-500/10 text-red-500 border-red-500/20; }
+
+  /* ─── Nav item ─── */
+  .nav-item {
+    @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-all duration-200;
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  .nav-item:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  .nav-item.active {
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 16px;
+    border-radius: 0 4px 4px 0;
+    background: hsl(var(--primary));
+    transition: all 0.2s ease;
+  }
+
+  /* ─── Data table ─── */
+  .data-table {
+    @apply w-full text-sm;
+  }
+
+  .data-table thead tr {
+    @apply border-b border-border/50;
+  }
+
+  .data-table th {
+    @apply pb-3 pr-4 text-left text-[11px] font-semibold tracking-wide text-muted-foreground;
+  }
+
+  .data-table td {
+    @apply py-3.5 pr-4;
+  }
+
+  .data-table tbody tr {
+    @apply border-b border-border/30 transition-colors;
+  }
+
+  .data-table tbody tr:hover {
+    background: hsl(var(--primary) / 0.04);
+  }
+
+  .data-table tbody tr:last-child {
+    @apply border-0;
+  }
+
+  /* ─── Section header ─── */
+  .section-header {
+    @apply text-xs font-semibold tracking-wide text-muted-foreground;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--chart-violet)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ─── Animation keyframes ─── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 16px hsl(var(--primary) / 0.15); }
+}
+
+@keyframes marker-ripple {
+  0% { r: 6; opacity: 0.6; }
+  100% { r: 20; opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out both;
+}
+
+.animate-slide-in {
+  animation: slide-in-right 0.3s ease-out both;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted) / 0.5) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius);
+}
+
+/* ─── Stagger children ─── */
+.stagger-children > * {
+  animation: scale-in 0.4s ease-out both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 360ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 480ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 540ms; }
+
+/* ─── Custom scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
+/* ─── Chart tooltip ─── */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--glass-border)) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px hsl(var(--glass-shadow)) !important;
+  font-size: 12px !important;
+  backdrop-filter: blur(16px) !important;
+}
