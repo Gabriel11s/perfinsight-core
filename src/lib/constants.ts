@@ -11,7 +11,7 @@ export const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3VyeGVneWxxanJibWZpaHRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzOTI1NzgsImV4cCI6MjA4OTk2ODU3OH0.P47Jj6Q-7HPmafQ-aI0K-1mYUcqFS7LnxLAOqQLLYAI';
 
 export const GHL_CLIENT_ID =
-  import.meta.env.VITE_GHL_CLIENT_ID ?? '69b8b5d41be630d182694cf0-mmu0m4ia';
+  import.meta.env.VITE_GHL_CLIENT_ID ?? '69b8b5d41be630d182694cf0-mn68l48c';
 
 export const GHL_MARKETPLACE_URL =
   'https://marketplace.leadconnectorhq.com/oauth/chooselocation';
