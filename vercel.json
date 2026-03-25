@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/((?!assets|bundle-v3\\.js|favicon\\.ico|robots\\.txt|countries-110m\\.json|placeholder\\.svg).*)", "destination": "/index.html" }
+  ]
+}
