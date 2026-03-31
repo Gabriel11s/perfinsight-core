@@ -29,3 +29,5 @@ dist-ssr
 
 # MCP config (contains access tokens)
 .mcp.json
+
+.vercel

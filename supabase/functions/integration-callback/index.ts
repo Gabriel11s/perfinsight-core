@@ -29,6 +29,29 @@ Deno.serve(async (req) => {
       throw new Error("Credentials not configured");
     }
 
+    // Diagnostic: GET with ?diag=1 tests credentials against GHL
+    if (url.searchParams.get("diag") === "1") {
+      const testRes = await fetch(TOKEN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: "authorization_code",
+          code: "DIAG_TEST",
+          user_type: "Location",
+        }),
+      });
+      const testBody = await testRes.text();
+      return new Response(JSON.stringify({
+        status: testRes.status,
+        ghl_response: testBody,
+        client_id: clientId,
+        secret_prefix: clientSecret.substring(0, 8),
+        secret_length: clientSecret.length,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -90,30 +113,76 @@ Deno.serve(async (req) => {
 
     const redirectUri = `${Deno.env.get("SUPABASE_URL")}/functions/v1/integration-callback`;
 
-    // Exchange code for tokens
-    const tokenRes = await fetch(TOKEN_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
+    // Try multiple body combinations to find what GHL accepts
+    const attempts = [
+      // Attempt 1: minimal (no redirect_uri, no user_type)
+      {
+        label: "minimal",
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: "authorization_code",
+          code,
+        }),
       },
-      body: new URLSearchParams({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-      }),
-    });
+      // Attempt 2: with user_type only
+      {
+        label: "with_user_type",
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: "authorization_code",
+          code,
+          user_type: "Location",
+        }),
+      },
+      // Attempt 3: full (original)
+      {
+        label: "full",
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: redirectUri,
+          user_type: "Location",
+        }),
+      },
+    ];
 
-    if (!tokenRes.ok) {
-      const errText = await tokenRes.text();
-      throw new Error(
-        `Token exchange failed: ${tokenRes.status} - ${errText}`,
-      );
+    let tokenData: Record<string, unknown> | null = null;
+    let lastError = "";
+
+    for (const attempt of attempts) {
+      console.error(`ATTEMPT [${attempt.label}] →`, attempt.body.toString());
+
+      const res = await fetch(TOKEN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
+        body: attempt.body,
+      });
+
+      const text = await res.text();
+      console.error(`ATTEMPT [${attempt.label}] RESPONSE →`, res.status, text);
+
+      if (res.ok) {
+        tokenData = JSON.parse(text);
+        console.error(`SUCCESS on attempt [${attempt.label}]`);
+        break;
+      }
+      lastError = `${res.status} - ${text}`;
     }
 
-    const tokenData = await tokenRes.json();
+    if (!tokenData) {
+      throw new Error(`All token exchange attempts failed. Last: ${lastError}`);
+    }
+
+    console.error("Token exchange SUCCESS");
+
+    // tokenData already parsed above from responseText
     const accessToken = tokenData.access_token;
     const refreshToken = tokenData.refresh_token;
     const expiresIn = tokenData.expires_in || 86400;
