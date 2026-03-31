@@ -2,7 +2,7 @@ import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import {
-  LayoutDashboard, MapPin, Users, Bell, Download, Settings, Zap, X, LogOut,
+  LayoutDashboard, MapPin, Users, Bell, Download, Settings, Zap, X, LogOut, Megaphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,6 +14,7 @@ const navSections = [
       { label: 'Overview', to: '/', icon: LayoutDashboard },
       { label: 'Locations', to: '/locations', icon: MapPin },
       { label: 'Users', to: '/users', icon: Users },
+      { label: 'Marketing', to: '/marketing', icon: Megaphone },
     ],
   },
   {

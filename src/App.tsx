@@ -16,6 +16,7 @@ import LocationDetail from "./pages/LocationDetail";
 import Users from "./pages/Users";
 import UserDetail from "./pages/UserDetail";
 
+import Marketing from "./pages/Marketing";
 import Alerts from "./pages/Alerts";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
@@ -46,6 +47,7 @@ function ProtectedRoutes() {
           <Route path="/users" element={<Users />} />
           <Route path="/users/:userId" element={<UserDetail />} />
 
+          <Route path="/marketing" element={<Marketing />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
