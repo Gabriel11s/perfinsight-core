@@ -9,7 +9,7 @@ import {
   useMarketingFunnel,
   useMarketingTimeline,
 } from '@/hooks/use-marketing-data';
-import { useGhlUserNames } from '@/hooks/use-ghl-events';
+import { useGhlUserNames } from '@/hooks/use-tracker-data';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
 } from 'recharts';
