@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { AdSpendManager } from "@/components/dashboard/AdSpendManager";
 import { useGhlConnection, getGhlConnectUrl } from "@/hooks/use-ghl-connection";
 import { syncGhlNames } from "@/lib/sync-ghl";
 import { supabase } from "@/integrations/supabase/client";
@@ -1045,6 +1046,13 @@ export default function SettingsPage() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+      </div>
+
+      {/* Ad Spend */}
+      <div className="glass-card overflow-hidden">
+        <div className="p-5">
+          <AdSpendManager />
         </div>
       </div>
 

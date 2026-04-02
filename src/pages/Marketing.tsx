@@ -1,4 +1,4 @@
-import { Users, TrendingUp, DollarSign, UserCheck, Megaphone, Loader2 } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, UserCheck, Megaphone, Loader2, Target, PiggyBank } from 'lucide-react';
 import { KpiCard } from '@/components/dashboard/KpiCard';
 import { ChannelTable } from '@/components/dashboard/ChannelTable';
 import { AgentPerformanceTable } from '@/components/dashboard/AgentPerformanceTable';
@@ -16,6 +16,10 @@ import {
 import { formatInTimeZone } from 'date-fns-tz';
 import { useFilters } from '@/hooks/use-filters';
 import { parseISO } from 'date-fns';
+import { useMarketingRoi, type RoiRow } from '@/hooks/use-ad-spend';
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
 
 const CHANNEL_COLORS = [
   '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
@@ -29,8 +33,16 @@ export default function Marketing() {
   const { data: funnel, isLoading: loadingFunnel } = useMarketingFunnel();
   const { data: timeline, isLoading: loadingTimeline } = useMarketingTimeline();
   const { data: userNameMap } = useGhlUserNames();
+  const { data: roiData } = useMarketingRoi();
 
   const isLoading = loadingChannels || loadingAgents || loadingFunnel || loadingTimeline;
+
+  // ROI summary totals
+  const totalSpend = roiData?.reduce((s, r) => s + Number(r.spend), 0) ?? 0;
+  const totalRevenue = funnel?.total_revenue ?? 0;
+  const overallRoi = totalSpend > 0 ? ((totalRevenue - totalSpend) / totalSpend * 100).toFixed(1) : null;
+  const overallCpl = (funnel?.total_leads ?? 0) > 0 && totalSpend > 0
+    ? (totalSpend / (funnel?.total_leads ?? 1)).toFixed(2) : null;
 
   // Build timeline chart data: pivot channels into columns per day
   const timelineChartData = (() => {
@@ -116,7 +128,85 @@ export default function Marketing() {
             />
           </div>
 
-          {/* Row 2 — Channel Table + Funnel */}
+          {/* Row 2 — ROI Metrics (only if ad_spend exists) */}
+          {roiData && roiData.some(r => Number(r.spend) > 0) && (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <KpiCard
+                  title="Investimento Total"
+                  value={`R$ ${totalSpend.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`}
+                  icon={<PiggyBank className="h-4 w-4" />}
+                  accentColor="#ef4444"
+                />
+                <KpiCard
+                  title="CPL (Custo/Lead)"
+                  value={overallCpl ? `R$ ${Number(overallCpl).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '—'}
+                  icon={<Target className="h-4 w-4" />}
+                  accentColor="#f97316"
+                />
+                <KpiCard
+                  title="ROI"
+                  value={overallRoi ? `${overallRoi}%` : '—'}
+                  subtitle={Number(overallRoi ?? 0) > 0 ? 'Positivo' : Number(overallRoi ?? 0) < 0 ? 'Negativo' : undefined}
+                  icon={<TrendingUp className="h-4 w-4" />}
+                  accentColor={Number(overallRoi ?? 0) >= 0 ? '#10b981' : '#ef4444'}
+                />
+                <KpiCard
+                  title="Receita vs Invest."
+                  value={totalSpend > 0 ? `${(totalRevenue / totalSpend).toFixed(1)}x` : '—'}
+                  subtitle="ROAS"
+                  icon={<DollarSign className="h-4 w-4" />}
+                  accentColor="#6366f1"
+                />
+              </div>
+
+              <div className="metric-card">
+                <h2 className="text-sm font-semibold text-foreground mb-3">ROI por Canal</h2>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Canal</TableHead>
+                        <TableHead className="text-right">Investimento</TableHead>
+                        <TableHead className="text-right">Leads</TableHead>
+                        <TableHead className="text-right">CPL</TableHead>
+                        <TableHead className="text-right">Vendas</TableHead>
+                        <TableHead className="text-right">CPA</TableHead>
+                        <TableHead className="text-right">Receita</TableHead>
+                        <TableHead className="text-right">ROI</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {roiData.filter(r => Number(r.spend) > 0 || Number(r.lead_count) > 0).map((row) => (
+                        <TableRow key={row.channel}>
+                          <TableCell className="font-medium">{row.channel}</TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            R$ {Number(row.spend).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">{row.lead_count}</TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {Number(row.cpl) > 0 ? `R$ ${Number(row.cpl).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '—'}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">{row.converted_count}</TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {Number(row.cpa) > 0 ? `R$ ${Number(row.cpa).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '—'}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            R$ {Number(row.revenue).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                          </TableCell>
+                          <TableCell className={`text-right tabular-nums font-semibold ${Number(row.roi_pct) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                            {Number(row.spend) > 0 ? `${row.roi_pct}%` : '—'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Row 3 — Channel Table + Funnel */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             <div className="lg:col-span-3 metric-card">
               <h2 className="text-sm font-semibold text-foreground mb-3">Canais de Origem</h2>
