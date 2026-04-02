@@ -23,3 +23,8 @@ verify_jwt = false
 verify_jwt = false
 # Schedule configured via Supabase Dashboard → Edge Functions → sync-names-scheduled → Schedule
 # Cron: "0 3 * * *"  (3 AM UTC daily)
+
+[functions.sync-ghl-data]
+verify_jwt = false
+# Pulls contacts/opportunities from GHL API every 5 minutes
+# Schedule: "*/5 * * * *" (configured via Supabase Dashboard)
